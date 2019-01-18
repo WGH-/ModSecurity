@@ -13,7 +13,9 @@
  *
  */
 
+#ifdef WITH_PCRE
 #include <pcre.h>
+#endif
 
 #include <iostream>
 #include <fstream>
@@ -28,6 +30,8 @@
 namespace modsecurity {
 namespace regex {
 namespace backend {
+
+#ifdef WITH_PCRE
 
 class Pcre {
  public:
@@ -66,6 +70,7 @@ class Pcre {
     std::string m_error;
 };
 
+#endif
 
 }  // namespace backend
 }  // namespace regex

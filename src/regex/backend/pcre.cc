@@ -18,7 +18,6 @@
 #include <fstream>
 #include <string>
 #include <list>
-#include <pcre.h>
 
 #include "src/regex/backend/pcre.h"
 #include "src/regex/regex_match.h"
@@ -28,6 +27,7 @@ namespace modsecurity {
 namespace regex {
 namespace backend {
 
+#ifdef WITH_PCRE
 
 #if PCRE_HAVE_JIT
 #define pcre_study_opt PCRE_STUDY_JIT_COMPILE
@@ -155,6 +155,7 @@ bool Pcre::search(const std::string &s, RegexMatch *m, ssize_t max_groups) const
     return do_match(m_pc, m_pce, m_capture_count, s.data(), s.size(), m, max_groups, 0);
 }
 
+#endif
 
 }  // namespace backend
 }  // namespace regex
