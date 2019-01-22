@@ -86,6 +86,20 @@ void json2bin(std::string *str) {
 //    replaceAll(str, "\\f", '\f');
 }
 
+static void print_array(std::stringstream &i,
+    const std::vector<std::string> array) {
+    i << "[";
+    bool first = true;
+    for (const auto &s : array) {
+        if (first) {
+            first = false;
+        } else {
+            i << ", ";
+        }
+        i << "\"" << modsecurity::utils::string::toHexIfNeeded(s) << "\"";
+    }
+    i << "]";
+}
 
 std::string UnitTest::print() {
     std::stringstream i;
@@ -99,6 +113,12 @@ std::string UnitTest::print() {
     i << "  \"input\": \"" << this->input << "\"" << std::endl;
     i << "  \"param\": \"" << this->param << "\"" << std::endl;
     i << "  \"output\": \"" << this->output << "\"" << std::endl;
+    if (this->re_groups.size() != 0) {
+        i << "  \"re_groups\": ";
+        print_array(i, this->re_groups);
+        i << std::endl;
+
+    }
     i << "}" << std::endl;
     if (this->ret != this->obtained) {
         i << "Expecting: \"" << this->ret << "\" - returned: \"";
@@ -110,6 +130,13 @@ std::string UnitTest::print() {
         i << "\" - returned: \"";
         i << modsecurity::utils::string::toHexIfNeeded(this->obtainedOutput);
         i << "\"";
+        i << std::endl;
+    }
+    if (this->re_groups.size() && this->re_groups != this->obtained_re_groups) {
+        i << "Expecting:\n  ";
+        print_array(i, this->re_groups);
+        i << "\nObtained:\n  ";
+        print_array(i, this->obtained_re_groups);
         i << std::endl;
     }
 
@@ -147,6 +174,16 @@ UnitTest *UnitTest::from_yajl_node(yajl_val &node) {
             * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=53690
             *
             */
+        } else if (strcmp(key, "re_groups") == 0) {
+            auto arr = YAJL_GET_ARRAY(val);
+            if (arr == NULL) {
+                continue;
+            }
+            for (int i = 0; i < arr->len; i++) {
+                const char *s = YAJL_GET_STRING(arr->values[i]);
+                if (s == NULL) continue;
+                u->re_groups.push_back(s);
+            }
         }
     }
 
