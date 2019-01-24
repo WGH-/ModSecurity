@@ -22,6 +22,7 @@
 #include <string>
 #include <list>
 
+#include "src/regex/backend/backend.h"
 #include "src/regex/regex_match.h"
 
 #ifndef SRC_REGEX_BACKEND_PCRE_H_
@@ -33,7 +34,7 @@ namespace backend {
 
 #ifdef WITH_PCRE
 
-class Pcre {
+class Pcre : public Backend {
  public:
     explicit Pcre(const std::string& pattern_);
     ~Pcre();
@@ -42,10 +43,10 @@ class Pcre {
     Pcre(const Pcre&) = delete;
     Pcre& operator=(const Pcre&) = delete;
 
-    std::vector<RegexMatch> searchAll(const std::string& s, bool overlapping = false) const;
-    bool search(const std::string &s, RegexMatch *m = nullptr, ssize_t max_groups = -1) const;
+    std::vector<RegexMatch> searchAll(const std::string& s, bool overlapping = false) const override;
+    bool search(const std::string &s, RegexMatch *m = nullptr, ssize_t max_groups = -1) const override;
 
-    bool ok(std::string *error = nullptr) const {
+    bool ok(std::string *error = nullptr) const override {
         if (m_pc != NULL) {
             return true;
         }
@@ -56,7 +57,7 @@ class Pcre {
         return false;
     }
 
-    const std::string& getPattern() const {
+    const std::string& getPattern() const override {
         return pattern;
     };
  private:

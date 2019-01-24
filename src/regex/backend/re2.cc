@@ -29,6 +29,10 @@ namespace backend {
 static RE2::Options get_re2_options() {
     RE2::Options res;
 
+    // Re2 is usually used with fallback to libpcre,
+    // so disable unnecessary stderr noise
+    res.set_log_errors(false);
+
     res.set_dot_nl(true);
 
     return res;

@@ -20,6 +20,7 @@
 #include <string>
 #include <list>
 
+#include "src/regex/backend/backend.h"
 #include "src/regex/regex_match.h"
 
 #ifndef SRC_REGEX_BACKEND_RE2_H_
@@ -31,7 +32,7 @@ namespace backend {
 
 #ifdef WITH_RE2
 
-class Re2 {
+class Re2 : public Backend {
  public:
     explicit Re2(const std::string& pattern_);
 
@@ -39,10 +40,10 @@ class Re2 {
     Re2(const Re2&) = delete;
     Re2& operator=(const Re2&) = delete;
 
-    std::vector<RegexMatch> searchAll(const std::string& s, bool overlapping = false) const;
-    bool search(const std::string &s, RegexMatch *m = nullptr, ssize_t max_groups = -1) const;
+    std::vector<RegexMatch> searchAll(const std::string& s, bool overlapping = false) const override;
+    bool search(const std::string &s, RegexMatch *m = nullptr, ssize_t max_groups = -1) const override;
 
-    bool ok(std::string *error = nullptr) const {
+    bool ok(std::string *error = nullptr) const override {
         if (re.ok()) {
             return true;
         }
@@ -52,7 +53,7 @@ class Re2 {
         return false;
     }
 
-    const std::string& getPattern() const {
+    const std::string& getPattern() const override {
         return re.pattern();
     };
  private:
