@@ -21,6 +21,7 @@
 #include <list>
 
 #include "src/regex/backend/pcre.h"
+#include "src/regex/backend/re2.h"
 #include "src/regex/regex_match.h"
 
 #ifndef SRC_REGEX_REGEX_H_
@@ -30,7 +31,13 @@
 namespace modsecurity {
 namespace regex {
 
+#ifdef WITH_PCRE
 using selectedBackend = backend::Pcre;
+#elif WITH_RE2
+using selectedBackend = backend::Re2;
+#else
+#error "no regex backend selected"
+#endif
 
 class Regex : public selectedBackend {
   public:
