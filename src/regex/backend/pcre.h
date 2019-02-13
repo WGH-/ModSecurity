@@ -41,6 +41,17 @@ class Pcre {
     std::vector<RegexMatch> searchAll(const std::string& s, bool overlapping = false) const;
     bool search(const std::string &s, RegexMatch *m = nullptr, ssize_t max_groups = -1) const;
 
+    bool ok(std::string *error = nullptr) const {
+        if (m_pc != NULL) {
+            return true;
+        }
+        if (error != nullptr) {
+            *error= m_error;
+        }
+
+        return false;
+    }
+
     const std::string& getPattern() const {
         return pattern;
     };
@@ -51,6 +62,8 @@ class Pcre {
 
     pcre *m_pc = NULL;
     pcre_extra *m_pce = NULL;
+
+    std::string m_error;
 };
 
 
