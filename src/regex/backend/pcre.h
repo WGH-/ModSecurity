@@ -29,10 +29,6 @@ namespace modsecurity {
 namespace regex {
 namespace backend {
 
-
-#define OVECCOUNT 900
-
-
 class Pcre {
  public:
     explicit Pcre(const std::string& pattern_);
@@ -42,12 +38,17 @@ class Pcre {
     Pcre(const Pcre&) = delete;
     Pcre& operator=(const Pcre&) = delete;
 
-    std::list<RegexMatch> searchAll(const std::string& s) const;
-    int search(const std::string &s, RegexMatch *m) const;
-    int search(const std::string &s) const;
+    std::vector<RegexMatch> searchAll(const std::string& s, bool overlapping = false) const;
+    bool search(const std::string &s, RegexMatch *m = nullptr, ssize_t max_groups = -1) const;
 
-    const std::string pattern;
+    const std::string& getPattern() const {
+        return pattern;
+    };
  private:
+    const std::string pattern;
+
+    int m_capture_count;
+
     pcre *m_pc = NULL;
     pcre_extra *m_pce = NULL;
 };
